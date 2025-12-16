@@ -46,10 +46,3 @@ Follow these steps to successfully open and run the project:
 3.  **Sync Gradle:** Allow Gradle to fully sync and download all dependencies.
 4.  **Run:** Select an Emulator or physical device and press the **Run** button.
 
----
-
-## 📧 Submission Details
-
-* **Student Name:** <השם המלא שלך>
-* **Submission Date:** <DD/MM/YYYY>
-* **Email:** <כתובת המייל שלך>
