@@ -9,8 +9,8 @@ The application was developed in **Kotlin** using **Android Studio** as a practi
 
 ## ✨ Key Features
 
-* **Arcade Gameplay:** Fast-paced, endless survival where the goal is to achieve the highest possible score.
 * **Collision Detection:** Precise handling of player movement and collision with falling objects (meatballs).
+* **Haptic Feedback:** Vibration and toast messages on collisions.
 ---
 
 ## ▶️ Gameplay Demonstration
