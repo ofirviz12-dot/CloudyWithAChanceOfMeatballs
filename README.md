@@ -2,8 +2,7 @@
 
 ## 🚀 Project Overview
 
-This is an Android arcade game project titled "Cloudy with a Chance of Meatballs." The core gameplay involves the character **Flint** dodging meatballs falling towards them, challenging the player's reflexes and agility.
-
+This is an Android arcade game project titled "Cloudy with a Chance of Meatballs." The central objective is for the character **Flint** to continuously dodge the incoming meatballs.
 The application was developed in **Kotlin** using **Android Studio** as a practical assignment for a User Interface (UI) Development course.
 
 ---
@@ -12,19 +11,6 @@ The application was developed in **Kotlin** using **Android Studio** as a practi
 
 * **Arcade Gameplay:** Fast-paced, endless survival where the goal is to achieve the highest possible score.
 * **Collision Detection:** Precise handling of player movement and collision with falling objects (meatballs).
-* **Score Tracking:** Real-time score update based on survival time.
-* **High Score Persistence:** The top score is saved locally, remaining available even after the app is closed.
-
----
-
-## 🛠 Tech Stack and Implementation
-
-### Core Technologies
-* **Language:** Kotlin (Version 2.0.21)
-* **UI Framework:** XML Layouts and View Binding
-* **Storage:** Shared Preferences (Used for storing the high score)
-* **Architecture:** Basic structure utilizing standard Android Lifecycle Components.
-
 ---
 
 ## ▶️ Gameplay Demonstration
