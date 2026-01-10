@@ -8,46 +8,99 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/arcadebackground" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#F7F0C9">
+        android:background="@android:color/transparent">
+
 
         <LinearLayout
             android:id="@+id/lifeInGame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingTop="5dp"
             android:orientation="horizontal"
-            android:gravity="end|center_vertical"
+            android:gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             >
+            <LinearLayout
+                android:id="@+id/hearts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/white_background"
+                >
 
-            <ImageView
-                android:id="@+id/heart1"
-                android:layout_width="60dp"
-                android:layout_height="65dp"
-                android:src="@drawable/ic_heart"
-                android:padding="6dp"
-                />
+                <ImageView
+                    android:id="@+id/heart1"
+                    android:layout_width="50dp"
+                    android:layout_height="65dp"
+                    android:src="@drawable/ic_heart"
+                    android:padding="6dp"
+                    />
 
 
-            <ImageView
-                android:id="@+id/heart2"
-                android:layout_width="60dp"
-                android:layout_height="65dp"
-                android:src="@drawable/ic_heart"
-                android:padding="6dp"
-                />
+                <ImageView
+                    android:id="@+id/heart2"
+                    android:layout_width="50dp"
+                    android:layout_height="65dp"
+                    android:src="@drawable/ic_heart"
+                    android:padding="6dp"
+                    />
 
-            <ImageView
-                android:id="@+id/heart3"
-                android:layout_width="60dp"
-                android:layout_height="65dp"
-                android:src="@drawable/ic_heart"
-                android:padding="6dp"
-                />
+                <ImageView
+                    android:id="@+id/heart3"
+                    android:layout_width="50dp"
+                    android:layout_height="65dp"
+                    android:src="@drawable/ic_heart"
+                    android:padding="6dp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                >
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/distance"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@drawable/white_background"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DISTANCE"
+                    android:textColor="#D7443E"
+                    android:textSize="15dp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/distanceText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0m"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#D7443E"/>
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -91,6 +144,21 @@
                     android:layout_weight="1"
                     android:src="@android:color/transparent"/>
 
+                <ImageView
+                    android:id="@+id/cell_03"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_04"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"
+                    />
+
 
                 </LinearLayout>
 
@@ -119,6 +187,20 @@
 
                 <ImageView
                     android:id="@+id/cell_12"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_13"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_14"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -157,6 +239,20 @@
                     android:layout_weight="1"
                     android:src="@android:color/transparent"/>
 
+                <ImageView
+                    android:id="@+id/cell_23"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_24"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
 
             </LinearLayout>
 
@@ -185,6 +281,20 @@
 
                 <ImageView
                     android:id="@+id/cell_32"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_33"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_34"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -223,6 +333,67 @@
                     android:layout_weight="1"
                     android:src="@android:color/transparent"/>
 
+                <ImageView
+                    android:id="@+id/cell_43"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_44"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/row5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/cell_50"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+
+                <ImageView
+                    android:id="@+id/cell_51"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+
+                <ImageView
+                    android:id="@+id/cell_52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_53"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/cell_54"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
 
             </LinearLayout>
 
@@ -234,7 +405,14 @@
                 android:layout_weight="2">
 
                 <ImageView
-                    android:id="@+id/leftCol"
+                    android:id="@+id/leftCol0"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/leftCol1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -252,7 +430,14 @@
 
 
                 <ImageView
-                    android:id="@+id/rightCol"
+                    android:id="@+id/rightCol0"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/rightCol1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"

@@ -1,46 +1,62 @@
 package com.example.cloudywithachanceofmeatballs
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.Vibrator
-import android.os.VibrationEffect
-import android.view.View
-import android.widget.ImageView
-import android.widget.Toast
+import android.Manifest
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.cloudywithachanceofmeatballs.databinding.ActivityMainBinding
-import java.util.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : AppCompatActivity(), GameLogic.GameEventsListener, SensorController.SensorActions {
 
     private lateinit var binding: ActivityMainBinding
-    private val meatballsGrid = Array(5) { arrayOfNulls<ImageView>(3) }
 
-    private val playerCols = arrayOfNulls<ImageView>(3)
-
-    private val hearts = arrayOfNulls<ImageView>(3)
-
-    private var playerPos = 1
-    private var lives = 3
+    private lateinit var gameLogic: GameLogic
+    private lateinit var uiManager: GameUIManager
+    private lateinit var soundManager: SoundManager
+    private lateinit var scoreManager: ScoreManager
+    private lateinit var vibrationManager: VibrationManager
+    private lateinit var sensorController: SensorController
+    private lateinit var sensorManager: SensorManager
 
     private val handler = Handler(Looper.getMainLooper())
-    private val random = Random()
+    private lateinit var gameTimer: GameTimer
+    private var isGameOver = false
+    private var isSensorMode = false
+    private var currentPlayerName = "Player"
 
-    private val meatballExist = Array(5) { BooleanArray(3) }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var isScoreSaved = false
+
+    private var lastKnownLat: Double? = null
+    private var lastKnownLng: Double? = null
+
+    private val LOCATION_PERMISSION_REQUEST = 100
+
+    private lateinit var locationCallback: LocationCallback
+
+
 
     private val gameRunnable = object : Runnable {
         override fun run() {
-            try {
-                moveMeatballsDown()
-                spawnNewMeatball()
-
-                if (lives > 0) {
-                    handler.postDelayed(this, 600)
+            if (!isGameOver) {
+                gameLogic.updateGameCycle()
+                uiManager.updateGrid(gameLogic.itemGridState)
+                if (!isGameOver) {
+                handler.postDelayed(this, gameLogic.currentSpeed)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                handler.postDelayed(this, 600)
             }
         }
     }
@@ -50,168 +66,246 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initViews()
-        updatePlayer()
-        updateHearts()
-        setupControls()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        isScoreSaved = false
 
-        handler.postDelayed(gameRunnable, 800)
-    }
-
-    private fun initViews() {
-
-        // row 0
-        meatballsGrid[0][0] = binding.cell00
-        meatballsGrid[0][1] = binding.cell01
-        meatballsGrid[0][2] = binding.cell02
-
-        // row 1
-        meatballsGrid[1][0] = binding.cell10
-        meatballsGrid[1][1] = binding.cell11
-        meatballsGrid[1][2] = binding.cell12
-
-        // row 2
-        meatballsGrid[2][0] = binding.cell20
-        meatballsGrid[2][1] = binding.cell21
-        meatballsGrid[2][2] = binding.cell22
-
-        // row 3
-        meatballsGrid[3][0] = binding.cell30
-        meatballsGrid[3][1] = binding.cell31
-        meatballsGrid[3][2] = binding.cell32
-
-        // row 4
-        meatballsGrid[4][0] = binding.cell40
-        meatballsGrid[4][1] = binding.cell41
-        meatballsGrid[4][2] = binding.cell42
-
-
-        //player row
-        playerCols[0] = binding.leftCol
-        playerCols[1] = binding.flint
-        playerCols[2] = binding.rightCol
-    }
-
-    private fun setupControls() {
-        binding.leftArrow.setOnClickListener {
-            movePlayerLeft()
-        }
-        binding.rightArrow.setOnClickListener {
-            movePlayerRight()
-        }
-    }
-
-    private fun movePlayerLeft() {
-        if (playerPos > 0) {
-            playerPos--
-            updatePlayer()
-        }
-    }
-
-    private fun movePlayerRight() {
-        if (playerPos < 2) {
-            playerPos++
-            updatePlayer()
-        }
-    }
-
-    private fun updatePlayer() {
-        for (i in 0..2) {
-            if (i == playerPos) {
-                playerCols[i]?.setImageResource(R.drawable.flint)
-            } else {
-                playerCols[i]?.setImageResource(android.R.color.transparent)
-            }
-        }
-    }
-
-    private fun updateHearts() {
-        binding.heart1.visibility = if (lives >= 1) View.VISIBLE else View.INVISIBLE
-        binding.heart2.visibility = if (lives >= 2) View.VISIBLE else View.INVISIBLE
-        binding.heart3.visibility = if (lives >= 3) View.VISIBLE else View.INVISIBLE
-    }
-
-
-    private fun spawnNewMeatball() {
-        val freeCols = mutableListOf<Int>()
-
-        for (col in 0..2) {
-            var hasMeatball = false
-            for (row in 0..4) {
-                if (meatballExist[row][col]) {
-                    hasMeatball = true
-                    break
-                }
-            }
-            if (!hasMeatball) freeCols.add(col)
-        }
-
-        if (freeCols.isNotEmpty()) {
-            val col = freeCols[random.nextInt(freeCols.size)]
-            meatballExist[0][col] = true
-            meatballsGrid[0][col]?.setImageResource(R.drawable.meatball)
-        }
-    }
-
-    private fun moveMeatballsDown() {
-        for (col in 0..2) {
-
-            if (meatballExist[4][col] && col == playerPos) {
-                handlePlayerHit()
-            }
-            if (meatballExist[4][col]) {
-                meatballsGrid[4][col]?.setImageResource(android.R.color.transparent)
-                meatballExist[4][col] = false
-            }
-        }
-        for (row in 3 downTo 0) {
-            for (col in 0..2) {
-                if (meatballExist[row][col]) {
-                    meatballsGrid[row][col]?.setImageResource(android.R.color.transparent)
-                    meatballExist[row][col] = false
-
-                    meatballsGrid[row + 1][col]?.setImageResource(R.drawable.meatball)
-                    meatballExist[row + 1][col] = true
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                val location = result.lastLocation
+                if (location != null) {
+                    lastKnownLat = location.latitude
+                    lastKnownLng = location.longitude
                 }
             }
         }
+        checkLocationPermission()
+
+
+        uiManager = GameUIManager(binding)
+        soundManager = SoundManager(this)
+        scoreManager = ScoreManager(this)
+        vibrationManager = VibrationManager(this)
+        gameLogic = GameLogic(this)
+        sensorController = SensorController(this)
+
+        currentPlayerName = intent.getStringExtra("PLAYER_NAME") ?: "Player"
+        uiManager.showToast(this, "Welcome $currentPlayerName")
+
+        startLocationUpdates()
+
+        uiManager.updateHearts(gameLogic.lives)
+        uiManager.updatePlayerPosition(gameLogic.playerPos)
+
+        setupGameMode()
+
+        gameTimer = GameTimer { seconds -> binding.distanceText.text = "${seconds}m" }
+        gameTimer.startTimer()
     }
 
-    private fun handlePlayerHit() {
+    // LifeCycle
 
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator?
+    override fun onStart() {
+        super.onStart()
+    }
 
-        if (vibrator != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        200,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
-                )
-            } else {
-                vibrator.vibrate(200)
-            }
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+        if (isSensorMode) {
+            startSensors()
         }
 
-        Toast.makeText(this, "YOU LOSE LIFE", Toast.LENGTH_SHORT).show()
-
-        lives--
-        updateHearts()
-
-        binding.flint.alpha = 0.3f
-        handler.postDelayed({
-            binding.flint.alpha = 1f
-        }, 300)
-
-        if (lives == 0) {
-            Toast.makeText(this, "GAME OVER", Toast.LENGTH_LONG).show()
-            handler.removeCallbacks(gameRunnable)
+        if (!isGameOver) {
+            startGameLoop()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isSensorMode) stopSensors()
+        stopGameLoop()
+    }
+    override fun onStop() {
+        super.onStop()
+        stopLocationUpdates()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        stopGameLoop()
+        if (::gameTimer.isInitialized) gameTimer.stopTimer()
+        soundManager.release()
+    }
+
+    private fun startGameLoop() {
+        stopGameLoop()
+        handler.postDelayed(gameRunnable, gameLogic.currentSpeed)
+    }
+
+    private fun stopGameLoop() {
         handler.removeCallbacks(gameRunnable)
     }
+
+    private fun startSensors() {
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.registerListener(sensorController, accelerometer, SensorManager.SENSOR_DELAY_GAME)
+    }
+
+    private fun stopSensors() {
+        if (::sensorManager.isInitialized) {
+            sensorManager.unregisterListener(sensorController)
+        }
+    }
+
+    private fun setupGameMode() {
+        val gameMode = intent.getStringExtra("GAME_MODE") ?: "SLOW"
+        isSensorMode = (gameMode == "SENSORS")
+
+        if (isSensorMode) {
+            gameLogic.setSpeed(isFast = false)
+            uiManager.updateArrowsVisibility(show = false)
+        } else {
+            gameLogic.setSpeed(isFast = (gameMode == "FAST"))
+            uiManager.updateArrowsVisibility(show = true)
+
+            binding.leftArrow.setOnClickListener { onMoveLeft() }
+            binding.rightArrow.setOnClickListener { onMoveRight() }
+        }
+    }
+
+    override fun onMoveLeft() {
+        gameLogic.movePlayerLeft()
+        uiManager.updatePlayerPosition(gameLogic.playerPos)
+    }
+
+    override fun onMoveRight() {
+        gameLogic.movePlayerRight()
+        uiManager.updatePlayerPosition(gameLogic.playerPos)
+    }
+
+    override fun onSpeedChange(isFast: Boolean) {
+        if (isSensorMode) {
+            gameLogic.setSpeed(isFast)
+        }
+    }
+
+    override fun onHit() {
+        soundManager.playHitSound()
+        vibrationManager.vibrateHit()
+        uiManager.showHitEffect()
+        uiManager.updateHearts(gameLogic.lives)
+        uiManager.showToast(this, "YOU LOSE LIFE")
+    }
+
+    override fun onCoinCollected() {
+        soundManager.playCoinSound()
+        vibrationManager.vibratePickup()
+        gameTimer.addBonus(10)
+        uiManager.showToast(this, "+10 DISTANCE!")
+    }
+
+    private fun saveScoreToDb(lat: Double, lng: Double) {
+
+        if (isScoreSaved) return
+        isScoreSaved = true
+
+        scoreManager.saveScore(currentPlayerName, gameTimer.getCurrentTime(), lat, lng) {
+            val intent = Intent(this, GameOverActivity::class.java)
+            intent.putExtra("DISTANCE", gameTimer.getCurrentTime())
+            intent.putExtra("PLAYER_NAME", currentPlayerName)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+    override fun onGameOver() {
+        isGameOver = true
+        handler.removeCallbacksAndMessages(null)
+        gameTimer.stopTimer()
+
+
+        if (isSensorMode) {
+            stopSensors()
+        }
+
+
+        val defaultLat = 32.0853
+        val defaultLng = 34.7818
+
+        val lat = lastKnownLat ?: defaultLat
+        val lng = lastKnownLng ?: defaultLng
+
+        saveScoreToDb(lat, lng)
+    }
+    private fun startLocationUpdates() {
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            2000L
+        )
+            .setMinUpdateIntervalMillis(1000L)
+            .setMaxUpdateDelayMillis(3000L)
+            .build()
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                lastKnownLat = location.latitude
+                lastKnownLng = location.longitude
+            }
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+
+    private fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST
+            )
+        } else {
+            startLocationUpdates()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates()
+            }
+        }
+    }
+
+    private fun stopLocationUpdates() {
+        if (::fusedLocationClient.isInitialized && ::locationCallback.isInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+
+
 }
