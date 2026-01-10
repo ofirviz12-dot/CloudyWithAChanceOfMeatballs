@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/backgroundmenu"
+        android:scaleType="centerCrop"
+         />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        >
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHighScores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconSize="50dp"
+            app:icon="@drawable/trophy"
+            app:iconGravity="textStart"
+            android:paddingStart="20dp"
+            app:iconTint="@null"
+            android:layout_weight="1"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+
+            android:text="" />
+
+        <Space
+            android:layout_width="180dp"
+            android:layout_height="wrap_content">
+
+        </Space>
+
+
+        <EditText
+            android:id="@+id/edit_player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="Name"
+            android:background="@drawable/rounded_edittext"
+            android:padding="8dp"
+            android:textColorHint="#FFFFFF"
+            android:gravity="center"
+            android:inputType="textPersonName"
+
+            android:minWidth="100dp"
+            android:maxLines="1" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:padding="20dp">
+
+        <Button
+            android:id="@+id/btn_slow_mood"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Slow Mood"
+            android:textSize="12sp"
+            android:backgroundTint="#C12215" />
+
+        <Button
+            android:id="@+id/btn_fast_mood"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Fast Mood"
+            android:textSize="12sp"
+            android:backgroundTint="#C12215"/>
+
+        <Button
+            android:id="@+id/btn_sensors"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Sensors"
+            android:textSize="12sp"
+            android:backgroundTint="#C12215"/>
+
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>
