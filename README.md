@@ -27,7 +27,3 @@ To provide a quick visual demonstration of the game in action, please watch the 
 ](https://drive.google.com/file/d/1YnM2N2SErqnJlIcKRoR2muknWvFQBsdH/view?usp=sharing)
 ## ⚙️ How to Run Locally
 Follow these steps to successfully open and run the project:
-
-1. **Clone the Repository**
-```bash
-git clone <Your Repository URL Here>
